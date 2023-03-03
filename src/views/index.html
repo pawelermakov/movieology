@@ -11,9 +11,12 @@
   <body>
     <div id="app">
       <video :src="videoUrl" controls autoplay></video>
+      <hr />
+      <input v-model="searchTerm" placeholder="Поиск фильма" type="search" />
+      <button @click="findMovie">Найти</button>
       <ul>
         <li v-for="file in files" :key="file.magnet">
-          {{file.fileName}}
+          {{file.title}}
           <button @click="play(file)">Play</button>
         </li>
       </ul>
@@ -25,17 +28,9 @@
       createApp({
         data() {
           return {
+            searchTerm: '',
             activeVideo: {},
-            files: [
-              {
-                magnet: '43BFAD4D65DF51DE3F0941F43C963F832317B245',
-                fileName: 'Devs.S01E01.AMZN.WEB-DL.1080p.mkv'
-              },
-              {
-                magnet: '43BFAD4D65DF51DE3F0941F43C963F832317B245',
-                fileName: 'Devs.S01E02.AMZN.WEB-DL.1080p.mkv'
-              }
-            ]
+            files: []
           }
         },
         computed: {
@@ -44,8 +39,16 @@
         },
         methods: {
           async play(file) {
-            const response = await axios.get(`/stream/add/${file.magnet}`)
-            this.activeVideo = file
+            const { data } = await axios.get(`/stream/add/${file.magnet}`)
+            this.activeVideo = {
+              magnet: file.magnet,
+              fileName: data[0].name
+            }
+          },
+
+          async findMovie() {
+            const response = await axios.get(`/movies/search?searchTerm=${this.searchTerm}`)
+            this.files = response.data
           }
         }
       }).mount('#app')
