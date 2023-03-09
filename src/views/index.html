@@ -33,6 +33,9 @@
             files: []
           }
         },
+        async mounted() {
+          this.getMyMovies()
+        },
         computed: {
           videoUrl: ({ activeVideo }) =>
             activeVideo.fileName ? `/stream/${activeVideo.magnet}/${activeVideo.fileName}` : ''
@@ -48,6 +51,10 @@
 
           async findMovie() {
             const response = await axios.get(`/movies/search?searchTerm=${this.searchTerm}`)
+            this.files = response.data
+          },
+          async getMyMovies() {
+            const response = await axios.get(`/movies`)
             this.files = response.data
           }
         }
