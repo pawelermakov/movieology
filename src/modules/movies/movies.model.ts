@@ -36,6 +36,10 @@ const entity = new Schema<Movie>({
       default: ''
     }
   ],
+  backdrop: {
+    type: String,
+    default: ''
+  },
   poster: {
     type: String,
     default: ''
